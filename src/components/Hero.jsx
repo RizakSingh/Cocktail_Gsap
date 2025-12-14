@@ -1,10 +1,16 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from 'gsap/all';
+import { useMediaQuery } from 'react-responsive';
+gsap.registerPlugin(ScrollTrigger, SplitText)
+
 const Hero = () => {
+  const VideoRef = useRef(null)
+  const isMobile = useMediaQuery({maxWidth:767})
 useGSAP(()=>{
+  
   const heroSplit = new SplitText('.title',{type:'chars,words'});
   const paraSplit = new SplitText('.subtitle',{type:'lines'});
   heroSplit.chars.forEach((char)=> char.classList.add('text-gradient'))
@@ -34,6 +40,27 @@ scrollTrigger:{
   })
   leaf.to('.right-leaf',{y:200},0)
   leaf.to('.left-leaf',{y:-200},0)
+  const startValue = isMobile?'top 50%':'center 60%'
+  const endValue = isMobile?'120% top':'bottom top'
+
+  const tl = gsap.timeline({
+    scrollTrigger:{
+      trigger:'video',
+      start:startValue,
+      end:endValue,
+      scrub: true,
+      pin:true,
+      onEnter: ()=> VideoRef.current.play(),
+      onEnterBack: ()=> VideoRef.current.play(),
+      onLeave: ()=> VideoRef.current.pause(),
+      onLeaveBack: ()=> VideoRef.current.pause(),
+    }
+  })
+VideoRef.current.onloadedmetadata=()=>{
+  tl.to(VideoRef.current,{
+    currentTime:Video.current>duration
+  })
+}
 },[])
   return (
   <>
@@ -55,6 +82,9 @@ scrollTrigger:{
         </div>
         </div>
    </section>
+   <div className='video absolute inset-0 '>
+    <video ref={VideoRef} src="/videos/input.mp4" muted playsInline preload = "auto" ></video>
+   </div>
    </>
   )
 }
