@@ -58,7 +58,7 @@ scrollTrigger:{
   })
 VideoRef.current.onloadedmetadata=()=>{
   tl.to(VideoRef.current,{
-    currentTime:Video.current>duration
+    currentTime:video.current>duration
   })
 }
 },[])
